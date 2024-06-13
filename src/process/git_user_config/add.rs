@@ -5,16 +5,16 @@ use dialoguer::Input;
 use regex::Regex;
 
 pub fn add() -> Result<()> {
-  let config_name: String = Input::new()
-    .with_prompt("Enter the name of your user config. e.g.: github, gitlab, etc.")
+  let config_id: String = Input::new()
+    .with_prompt("Enter the id of your user config. e.g.: github, gitlab, etc.")
     .validate_with(|input: &String| -> Result<()> {
       if input.is_empty() {
-        return Err(anyhow::anyhow!("The user config name cannot be empty"));
+        return Err(anyhow::anyhow!("The user config id cannot be empty"));
       }
       let global_config = GlobalConfig::new()?;
       for git_user_config in &global_config.git_user_configs {
-        if git_user_config.config_name == *input {
-          return Err(anyhow::anyhow!("The user config name already exists"));
+        if git_user_config.config_id == *input {
+          return Err(anyhow::anyhow!("The user config id already exists"));
         }
       }
       Ok(())
@@ -44,11 +44,11 @@ pub fn add() -> Result<()> {
     })
     .interact()?;
 
-  GitUserConfig::new(&config_name, &name, &email).add()?;
+  GitUserConfig::new(&config_id, &name, &email).add()?;
 
   println!(
     "Git user config {}({}<{}>) added successfully!",
-    style(&config_name).bold(),
+    style(&config_id).bold(),
     style(&name).bold(),
     style(&email).bold()
   );

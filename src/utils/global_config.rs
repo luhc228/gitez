@@ -63,8 +63,8 @@ impl GlobalConfig {
     Ok(())
   }
 
-  pub fn remove_git_user_config(&mut self, config_name: &str) -> Result<()> {
-    self.git_user_configs.retain(|config| config.config_name != config_name);
+  pub fn remove_git_user_config(&mut self, config_id: &str) -> Result<()> {
+    self.git_user_configs.retain(|config| config.config_id != config_id);
     self.save()?;
 
     Ok(())

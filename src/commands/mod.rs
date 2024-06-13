@@ -44,13 +44,13 @@ pub enum UserConfigSubCommands {
   #[command(name = "apply", about = "Apply git user config to current directory.")]
   Apply {
     #[arg(help = "The name of the user config to set.")]
-    config_name: Option<String>,
+    config_id: Option<String>,
   },
 
   #[command(name = "remove", about = "Remove a git user config.")]
   Remove {
     #[arg(help = "The name of the user config to set.")]
-    config_name: Option<String>,
+    config_id: Option<String>,
   },
 
   #[command(

@@ -1,7 +1,7 @@
 use clap::Parser;
 use gitez::{
-  add_git_user_config, clone_repo, remove_git_user_config, set_base_dir, Cli, Commands, GlobalConfig,
-  UserConfigSubCommands,
+  add_git_user_config, apply_git_user_config, clone_repo, get_git_user_config_id, list_git_user_config,
+  remove_git_user_config, set_base_dir, Cli, Commands, GlobalConfig, UserConfigSubCommands,
 };
 
 fn main() -> anyhow::Result<()> {
@@ -23,14 +23,16 @@ fn main() -> anyhow::Result<()> {
       UserConfigSubCommands::Add => {
         add_git_user_config()?;
       }
-      UserConfigSubCommands::Apply { config_name } => {
-        println!("Setting config: {}", config_name.unwrap());
+      UserConfigSubCommands::Apply { config_id } => {
+        let config_id = get_git_user_config_id(config_id)?;
+        apply_git_user_config(config_id)?
       }
       UserConfigSubCommands::List => {
-        println!("Listing configs.");
+        list_git_user_config()?;
       }
-      UserConfigSubCommands::Remove { config_name } => {
-        remove_git_user_config(config_name)?;
+      UserConfigSubCommands::Remove { config_id } => {
+        let config_id = get_git_user_config_id(config_id)?;
+        remove_git_user_config(config_id)?;
       }
       UserConfigSubCommands::AddInclude => {
         println!("Adding include.");
