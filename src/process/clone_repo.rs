@@ -1,12 +1,9 @@
+use crate::{run_piped_command, GitUrl, GlobalConfig};
 use anyhow::Result;
 use std::{
   env,
-  io::{BufRead, BufReader},
   path::{Path, PathBuf},
-  process::{Command, Stdio},
 };
-
-use crate::{get_shell_args, get_shell_name, GitUrl, GlobalConfig};
 
 pub fn clone_repo(url: &str) -> Result<()> {
   let global_config = GlobalConfig::new()?;
@@ -14,7 +11,6 @@ pub fn clone_repo(url: &str) -> Result<()> {
   let repo_path: PathBuf = get_repo_local_path(&git_url, &global_config)?;
 
   call_git_clone_command(url, &repo_path)?;
-
   Ok(())
 }
 
@@ -33,29 +29,11 @@ fn get_repo_local_path(git_url: &GitUrl, global_config: &GlobalConfig) -> Result
 }
 
 fn call_git_clone_command(url: &str, repo_path: &Path) -> Result<()> {
-  let shell_name = get_shell_name();
-  let shell_args = get_shell_args(vec![
+  run_piped_command(vec![
     "git".to_string(),
     "clone".to_string(),
     url.to_string(),
     repo_path.to_string_lossy().to_string(),
-  ]);
-
-  let mut child = Command::new(shell_name)
-    .args(&shell_args)
-    .stdout(Stdio::piped())
-    .spawn()?;
-
-  if let Some(ref mut stdout) = child.stdout {
-    let reader = BufReader::new(stdout);
-    for line in reader.lines() {
-      println!("{}", line?.as_str());
-    }
-  } else if let Some(ref mut stderr) = child.stderr {
-    let reader = BufReader::new(stderr);
-    let error = reader.lines().collect::<Result<Vec<_>, _>>()?.join("\n");
-    return Err(anyhow::anyhow!(error));
-  }
-
+  ])?;
   Ok(())
 }

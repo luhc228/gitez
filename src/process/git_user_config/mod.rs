@@ -3,12 +3,16 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 mod add;
-mod add_include;
 mod apply;
+mod include;
 mod list;
 mod remove;
 
 pub use add::add as add_git_user_config;
+pub use apply::apply as apply_git_user_config;
+pub use include::include as include_git_config;
+pub use list::list as list_git_user_config;
+pub use remove::remove as remove_git_user_config;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GitUserConfig {
