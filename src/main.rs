@@ -1,21 +1,23 @@
 use clap::Parser;
-use gitez::{Cli, Commands, ConfigSubCommands};
+use gitez::{Cli, Commands, ConfigSubCommands, GlobalConfig, set_base_dir};
 
 fn main() -> anyhow::Result<()> {
+  GlobalConfig::init_config_file()?;
+
   let cli = Cli::parse();
 
   match cli.command {
-    Commands::SetBaseDir(base_dir) => {
-      println!("Setting base directory. {}", base_dir.base_dir);
+    Commands::SetBaseDir(opts) => {
+      set_base_dir(opts.base_dir)?;
     },
-    Commands::Clone(clone) => {
-      println!("Cloning repository. {}", clone.url);
+    Commands::Clone(opts) => {
+      println!("Cloning repository. {}", opts.url);
     },
     Commands::GenSSHKey => {
       println!("Generating SSH key.");
     },
-    Commands::Config(config) => {
-      match config {
+    Commands::Config(config_subcommands) => {
+      match config_subcommands {
         ConfigSubCommands::Add => {
           println!("Adding config.");
         },

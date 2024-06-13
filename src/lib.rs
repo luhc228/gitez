@@ -1,5 +1,8 @@
-mod cli_commands;
-mod cli_prompts;
+mod commands;
+mod prompts;
 mod process;
+mod utils;
 
-pub use cli_commands::*;
+pub use commands::*;
+pub use utils::*;
+pub use process::*;
