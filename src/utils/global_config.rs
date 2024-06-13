@@ -69,4 +69,8 @@ impl GlobalConfig {
 
     Ok(())
   }
+
+  pub fn get_git_user_configs(&self) -> Vec<GitUserConfig> {
+    self.git_user_configs.clone()
+  }
 }

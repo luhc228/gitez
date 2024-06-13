@@ -14,7 +14,7 @@ pub use include::include as include_git_config;
 pub use list::list as list_git_user_config;
 pub use remove::remove as remove_git_user_config;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GitUserConfig {
   pub config_name: String,
   pub name: String,
@@ -34,6 +34,11 @@ impl GitUserConfig {
     let mut global_config = GlobalConfig::new()?;
     global_config.add_git_user_config(self)?;
     Ok(())
+  }
+
+  pub fn get_all() -> Result<Vec<GitUserConfig>> {
+    let global_config = GlobalConfig::new()?;
+    Ok(global_config.get_git_user_configs())
   }
 
   pub fn remove(config_name: &str) -> Result<()> {
