@@ -9,7 +9,7 @@ pub struct Cli {
 #[derive(Subcommand, Debug)]
 pub enum Commands {
   #[command(subcommand)]
-  Config(ConfigSubCommands),
+  UserConfig(UserConfigSubCommands),
   #[command(
     name = "set-base-dir",
     about = "Set the base directory where your git repositories located."
@@ -34,21 +34,25 @@ pub struct SetBaseDirOptions {
 }
 
 #[derive(Subcommand, Debug)]
-pub enum ConfigSubCommands {
-  #[command(name = "add", about = "Add a git config.")]
+pub enum UserConfigSubCommands {
+  #[command(name = "add", about = "Add a git user config.")]
   Add,
-  #[command(name = "list", about = "List all git configs.")]
+
+  #[command(name = "list", about = "List all git user configs.")]
   List,
-  #[command(name = "apply", about = "Apply git config to current directory.")]
+
+  #[command(name = "apply", about = "Apply git user config to current directory.")]
   Apply {
-    #[arg(help = "The name of the config to set.")]
+    #[arg(help = "The name of the user config to set.")]
     config_name: Option<String>,
   },
-  #[command(name = "set", about = "Remove a git config.")]
+
+  #[command(name = "remove", about = "Remove a git user config.")]
   Remove {
-    #[arg(help = "The name of the config to set.")]
+    #[arg(help = "The name of the user config to set.")]
     config_name: Option<String>,
   },
+
   #[command(
     name = "add-include",
     about = "Include a config file to the name of the file to be included."

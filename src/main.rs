@@ -1,5 +1,5 @@
 use clap::Parser;
-use gitez::{clone_repo, set_base_dir, Cli, Commands, ConfigSubCommands, GlobalConfig};
+use gitez::{add_git_user_config, clone_repo, set_base_dir, Cli, Commands, GlobalConfig, UserConfigSubCommands};
 
 fn main() -> anyhow::Result<()> {
   GlobalConfig::init()?;
@@ -16,20 +16,20 @@ fn main() -> anyhow::Result<()> {
     Commands::GenSSHKey => {
       println!("Generating SSH key.");
     }
-    Commands::Config(config_subcommands) => match config_subcommands {
-      ConfigSubCommands::Add => {
-        println!("Adding config.");
+    Commands::UserConfig(user_config_subcommands) => match user_config_subcommands {
+      UserConfigSubCommands::Add => {
+        add_git_user_config()?;
       }
-      ConfigSubCommands::Apply { config_name } => {
+      UserConfigSubCommands::Apply { config_name } => {
         println!("Setting config: {}", config_name.unwrap());
       }
-      ConfigSubCommands::List => {
+      UserConfigSubCommands::List => {
         println!("Listing configs.");
       }
-      ConfigSubCommands::Remove { config_name } => {
+      UserConfigSubCommands::Remove { config_name } => {
         println!("Removing config: {}", config_name.unwrap());
       }
-      ConfigSubCommands::AddInclude => {
+      UserConfigSubCommands::AddInclude => {
         println!("Adding include.");
       }
     },
