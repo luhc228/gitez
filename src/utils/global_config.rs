@@ -1,7 +1,7 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use serde::{Serialize, Deserialize};
 
 const CONFIG_NAME: &str = ".gitez.json";
 
@@ -11,12 +11,11 @@ pub struct GlobalConfig {
 }
 
 impl GlobalConfig {
-  pub fn init_config_file() -> Result<()> { 
+  pub fn init() -> Result<()> {
     let config_path = GlobalConfig::config_path();
     if !config_path.exists() {
-      fs::write(config_path, "{}").map_err(|err| {
-        anyhow::anyhow!("Unable to create {}. Reason: {}",CONFIG_NAME, err)
-      })?;
+      fs::write(config_path, "{}")
+        .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", CONFIG_NAME, err))?;
     }
     Ok(())
   }
@@ -29,23 +28,19 @@ impl GlobalConfig {
   }
   pub fn new() -> Result<Self> {
     let config_path = GlobalConfig::config_path();
-    let config_str = fs::read_to_string(config_path).map_err(|err| {
-      anyhow::anyhow!("Unable to create {}. Reason: {}",CONFIG_NAME, err)
-    })?;
-    let config = serde_json::from_str::<GlobalConfig>(&config_str).map_err(|err| {
-      anyhow::anyhow!("Unable to parse {}. Reason: {}",CONFIG_NAME, err)
-    })?;
+    let config_str = fs::read_to_string(config_path)
+      .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", CONFIG_NAME, err))?;
+    let config = serde_json::from_str::<GlobalConfig>(&config_str)
+      .map_err(|err| anyhow::anyhow!("Unable to parse {}. Reason: {}", CONFIG_NAME, err))?;
     Ok(config)
   }
 
   pub fn save(&self) -> Result<()> {
     let config_path = GlobalConfig::config_path();
-    let config_str = serde_json::to_string_pretty(&self).map_err(|err| {
-      anyhow::anyhow!("Unable to serialize {}. Reason: {}",CONFIG_NAME, err)
-    })?;
-    fs::write(config_path, config_str).map_err(|err| {
-      anyhow::anyhow!("Unable to write {}. Reason: {}",CONFIG_NAME, err)
-    })?;
+    let config_str = serde_json::to_string_pretty(&self)
+      .map_err(|err| anyhow::anyhow!("Unable to serialize {}. Reason: {}", CONFIG_NAME, err))?;
+    fs::write(config_path, config_str)
+      .map_err(|err| anyhow::anyhow!("Unable to write {}. Reason: {}", CONFIG_NAME, err))?;
     Ok(())
   }
 }

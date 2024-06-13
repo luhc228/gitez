@@ -1,38 +1,36 @@
 use clap::Parser;
-use gitez::{Cli, Commands, ConfigSubCommands, GlobalConfig, set_base_dir};
+use gitez::{clone_repo, set_base_dir, Cli, Commands, ConfigSubCommands, GlobalConfig};
 
 fn main() -> anyhow::Result<()> {
-  GlobalConfig::init_config_file()?;
+  GlobalConfig::init()?;
 
   let cli = Cli::parse();
 
   match cli.command {
     Commands::SetBaseDir(opts) => {
-      set_base_dir(opts.base_dir)?;
-    },
+      set_base_dir(&opts.base_dir)?;
+    }
     Commands::Clone(opts) => {
-      println!("Cloning repository. {}", opts.url);
-    },
+      clone_repo(&opts.url)?;
+    }
     Commands::GenSSHKey => {
       println!("Generating SSH key.");
-    },
-    Commands::Config(config_subcommands) => {
-      match config_subcommands {
-        ConfigSubCommands::Add => {
-          println!("Adding config.");
-        },
-        ConfigSubCommands::Set { config_name } => {
-          println!("Setting config: {}", config_name.unwrap());
-        },
-        ConfigSubCommands::List => {
-          println!("Listing configs.");
-        },
-        ConfigSubCommands::Remove { config_name } => {
-          println!("Removing config: {}", config_name.unwrap());
-        },
-        ConfigSubCommands::AddInclude => {
-          println!("Adding include.");
-        },
+    }
+    Commands::Config(config_subcommands) => match config_subcommands {
+      ConfigSubCommands::Add => {
+        println!("Adding config.");
+      }
+      ConfigSubCommands::Apply { config_name } => {
+        println!("Setting config: {}", config_name.unwrap());
+      }
+      ConfigSubCommands::List => {
+        println!("Listing configs.");
+      }
+      ConfigSubCommands::Remove { config_name } => {
+        println!("Removing config: {}", config_name.unwrap());
+      }
+      ConfigSubCommands::AddInclude => {
+        println!("Adding include.");
       }
     },
   }

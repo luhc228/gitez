@@ -10,7 +10,10 @@ pub struct Cli {
 pub enum Commands {
   #[command(subcommand)]
   Config(ConfigSubCommands),
-  #[command(name = "set-base-dir", about = "Set the base directory where your git repositories located.")]
+  #[command(
+    name = "set-base-dir",
+    about = "Set the base directory where your git repositories located."
+  )]
   SetBaseDir(SetBaseDirOptions),
   #[command(name = "clone", about = "Clone a repository to the base directory.")]
   Clone(CloneOptions),
@@ -36,8 +39,8 @@ pub enum ConfigSubCommands {
   Add,
   #[command(name = "list", about = "List all git configs.")]
   List,
-  #[command(name = "set", about = "Set git config to current directory.")]
-  Set {
+  #[command(name = "apply", about = "Apply git config to current directory.")]
+  Apply {
     #[arg(help = "The name of the config to set.")]
     config_name: Option<String>,
   },
@@ -46,6 +49,9 @@ pub enum ConfigSubCommands {
     #[arg(help = "The name of the config to set.")]
     config_name: Option<String>,
   },
-  #[command(name = "add-include", about = "Include a config file to the name of the file to be included.")]
+  #[command(
+    name = "add-include",
+    about = "Include a config file to the name of the file to be included."
+  )]
   AddInclude,
 }
