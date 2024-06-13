@@ -1,0 +1,77 @@
+name: Tests and Release
+
+on:
+  # [push]
+  workflow_dispatch
+
+jobs:
+  test:
+    name: "unit tests"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-13, windows-latest]
+    steps:
+      - uses: hecrj/setup-rust-action@v2
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+
+  # build_and_release:
+  #   name: ${{ matrix.platform.os_name }} build and release
+  #   runs-on: ${{ matrix.platform.os }}
+  #   needs: test
+  #   if: (startsWith(github.ref, 'refs/tags/cli-v') || github.ref == 'refs/heads/test-release')
+  #   strategy:
+  #     matrix:
+  #       platform:
+  #         - os_name: windows-x86_64
+  #           os: windows-latest
+  #           target: x86_64-pc-windows-msvc
+  #           bin: toolkit.exe
+  #           name: toolkit-Windows-x86_64.zip
+  #         - os_name: macOS-x86_64
+  #           # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+  #           os: macos-13
+  #           target: x86_64-apple-darwin
+  #           bin: toolkit
+  #           name: toolkit-macOS-x86_64.zip
+  #         - os_name: macOS-aarch64
+  #           os: macos-latest
+  #           target: aarch64-apple-darwin
+  #           bin: toolkit
+  #           name: toolkit-macOS-aarch64.zip
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: Swatinem/rust-cache@v2
+  #     - name: Build binary
+  #       uses: houseabsolute/actions-rust-cross@v0
+  #       with:
+  #         command: "build"
+  #         target: ${{ matrix.platform.target }}
+  #         args: "--locked --release"
+  #         strip: true
+  #       # Windows
+  #     - name: Move binary to bin directory
+  #       run: |
+  #         cd target/${{ matrix.platform.target }}/release
+  #         7z a ../../../${{ matrix.platform.name }} ${{ matrix.platform.bin }}
+  #       if: matrix.platform.os == 'windows-latest'
+  #       # Macos & Linux
+  #     - name: Move binary to bin directory
+  #       run: |
+  #         cd target/${{ matrix.platform.target }}/release
+  #         zip ../../../${{ matrix.platform.name }} ${{ matrix.platform.bin }}
+  #       if: matrix.platform.os != 'windows-latest'
+  #     - name: Publish release binary
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: toolkit-${{ matrix.platform.os_name }}
+  #         path: ${{ matrix.platform.name }}
+  #     - name: Publish GitHub release
+  #       uses: softprops/action-gh-release@v2
+  #       with:
+  #         draft: true
+  #         files: ${{ matrix.platform.name }}
+  #         body_path: CHANGELOG.md
