@@ -2,7 +2,7 @@
 
 [![Crates.io][crates-badge]][crates-url]
 
-[crates-badge]: https://img.shields.io/crates/v/gitc.svg
+[crates-badge]: https://img.shields.io/crates/v/gitez.svg
 [crates-url]: https://crates.io/crates/gitez
 
 Gitez(ez means easy) is a CLI that simplifies managing your Git repositories.
