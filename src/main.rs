@@ -1,36 +1,41 @@
 use clap::Parser;
-use gitez::{Cli, Commands, ConfigSubCommands};
+use gitez::{
+  add_git_user_config, apply_git_user_config, clone_repo, gen_ssh_key, get_git_user_config_id, include_git_config,
+  list_git_user_config, remove_git_user_config, set_base_dir, Cli, Commands, GlobalConfig, UserConfigSubCommands,
+};
 
 fn main() -> anyhow::Result<()> {
+  GlobalConfig::init()?;
+
   let cli = Cli::parse();
 
   match cli.command {
-    Commands::SetBaseDir(base_dir) => {
-      println!("Setting base directory. {}", base_dir.base_dir);
-    },
-    Commands::Clone(clone) => {
-      println!("Cloning repository. {}", clone.url);
-    },
+    Commands::SetBaseDir(opts) => {
+      set_base_dir(&opts.base_dir)?;
+    }
+    Commands::Clone(opts) => {
+      clone_repo(&opts.url)?;
+    }
     Commands::GenSSHKey => {
-      println!("Generating SSH key.");
-    },
-    Commands::Config(config) => {
-      match config {
-        ConfigSubCommands::Add => {
-          println!("Adding config.");
-        },
-        ConfigSubCommands::Set { config_name } => {
-          println!("Setting config: {}", config_name.unwrap());
-        },
-        ConfigSubCommands::List => {
-          println!("Listing configs.");
-        },
-        ConfigSubCommands::Remove { config_name } => {
-          println!("Removing config: {}", config_name.unwrap());
-        },
-        ConfigSubCommands::AddInclude => {
-          println!("Adding include.");
-        },
+      gen_ssh_key()?;
+    }
+    Commands::UserConfig(user_config_subcommands) => match user_config_subcommands {
+      UserConfigSubCommands::Add => {
+        add_git_user_config()?;
+      }
+      UserConfigSubCommands::Apply { config_id } => {
+        let config_id = get_git_user_config_id(config_id)?;
+        apply_git_user_config(config_id)?
+      }
+      UserConfigSubCommands::List => {
+        list_git_user_config()?;
+      }
+      UserConfigSubCommands::Remove { config_id } => {
+        let config_id = get_git_user_config_id(config_id)?;
+        remove_git_user_config(config_id)?;
+      }
+      UserConfigSubCommands::AddInclude => {
+        include_git_config()?;
       }
     },
   }
