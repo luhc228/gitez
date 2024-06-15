@@ -2,6 +2,8 @@
 name = "gitez"
 version = "0.1.0"
 edition = "2021"
+description = "Gitez is a CLI that simplifies managing your Git repositories."
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
