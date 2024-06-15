@@ -5,7 +5,7 @@ use regex::Regex;
 
 pub fn add() -> Result<()> {
   let config_id: String = Input::new()
-    .with_prompt("Enter the id of your user config. e.g.: github, gitlab, etc.")
+    .with_prompt("Enter the id of your user config. e.g.: github, gitlab.")
     .validate_with(|input: &String| -> Result<()> {
       if input.is_empty() {
         return Err(anyhow::anyhow!("The user config id cannot be empty"));

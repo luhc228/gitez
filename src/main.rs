@@ -1,6 +1,6 @@
 use clap::Parser;
 use gitez::{
-  add_git_user_config, apply_git_user_config, clone_repo, get_git_user_config_id, include_git_config,
+  add_git_user_config, apply_git_user_config, clone_repo, gen_ssh_key, get_git_user_config_id, include_git_config,
   list_git_user_config, remove_git_user_config, set_base_dir, Cli, Commands, GlobalConfig, UserConfigSubCommands,
 };
 
@@ -17,7 +17,7 @@ fn main() -> anyhow::Result<()> {
       clone_repo(&opts.url)?;
     }
     Commands::GenSSHKey => {
-      println!("Generating SSH key.");
+      gen_ssh_key()?;
     }
     Commands::UserConfig(user_config_subcommands) => match user_config_subcommands {
       UserConfigSubCommands::Add => {
