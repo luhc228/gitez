@@ -56,7 +56,7 @@ gitez set-base-dir <your-base-dir> # gitez set-base-dir ~/dev
 Second, clone a git repository.
 
 ```shell
-gitez clone <repository-url> # gitez clone https://github.com/luhc228/gitez
+gitez clone <repository-url> # gitez clone git@github.com:luhc228/gitez.git
 ```
 
 Then, you will get the following directory structure.
