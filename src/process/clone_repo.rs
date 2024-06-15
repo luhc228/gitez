@@ -1,5 +1,6 @@
 use crate::{run_piped_command, GitUrl, GlobalConfig};
 use anyhow::Result;
+use console::style;
 use std::{
   env,
   path::{Path, PathBuf},
@@ -11,6 +12,12 @@ pub fn clone_repo(url: &str) -> Result<()> {
   let repo_path: PathBuf = get_repo_local_path(&git_url, &global_config)?;
 
   call_git_clone_command(url, &repo_path)?;
+  println!("\n🎉 Cloned repository Successfully!\n");
+  println!(
+    "You can enter the repository by running the command:\n\n{}",
+    style(format!("cd {}", repo_path.to_string_lossy())).bold().green()
+  );
+
   Ok(())
 }
 

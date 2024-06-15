@@ -56,7 +56,7 @@ pub fn gen_ssh_key() -> Result<()> {
   add_ssh_host_to_config(ssh_dir, &host_config)?;
 
   let rsa_pub = fs::read_to_string(rsa_pub_path)?;
-  println!("🔑 Public SSH Key:\n {}", rsa_pub);
+  println!("🔑 Public SSH Key:\n{}", rsa_pub);
   println!("You can add this key to your git account");
 
   Ok(())
