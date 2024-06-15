@@ -80,7 +80,9 @@ Host {host_name}
 
 fn add_ssh_host_to_config(ssh_dir: PathBuf, host_config: &str) -> Result<()> {
   let ssh_config_path = ssh_dir.join("config");
-
+  if !ssh_config_path.exists() {
+    fs::write(&ssh_config_path, "")?;
+  }
   let mut source = fs::read_to_string(&ssh_config_path)?;
   source.push_str(host_config);
   fs::write(ssh_config_path, source)?;

@@ -1,6 +1,6 @@
 [package]
 name = "gitez"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Gitez is a CLI that simplifies managing your Git repositories."
 license = "MIT"
