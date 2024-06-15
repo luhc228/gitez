@@ -21,9 +21,16 @@ pub fn get_git_user_config_id(raw_config_id: Option<String>) -> anyhow::Result<S
         })
         .collect::<Vec<String>>();
 
+      if items.is_empty() {
+        return Err(anyhow::anyhow!(
+          "No git user config found. Please add one by running `gitez user-config add`"
+        ));
+      }
+
       let selection = Select::new()
-        .with_prompt("Chose the user config you want to remove")
+        .with_prompt("choose the user config you want to remove")
         .items(&items)
+        .default(0)
         .interact()?;
       let selected_config_id = &git_user_configs[selection].config_id;
 

@@ -5,7 +5,8 @@ use std::path::PathBuf;
 
 use crate::GitUserConfig;
 
-const CONFIG_NAME: &str = ".gitez.json";
+pub const DIR: &str = ".gitez";
+const CONFIG_FILENAME: &str = "config.json";
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GlobalConfig {
@@ -16,34 +17,43 @@ pub struct GlobalConfig {
 impl GlobalConfig {
   pub fn init() -> Result<()> {
     let config_path = GlobalConfig::config_path();
+    Self::init_dir()?;
     if !config_path.exists() {
-      fs::write(config_path, "{ git_user_configs: [] }")
-        .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", CONFIG_NAME, err))?;
+      fs::write(&config_path, "{ \"git_user_configs\": [] }")
+        .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", config_path.display(), err))?;
+    }
+    Ok(())
+  }
+  fn init_dir() -> Result<()> {
+    let config_path = GlobalConfig::config_path();
+    let dir = config_path.parent().unwrap();
+    if !dir.exists() {
+      fs::create_dir(dir).map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", dir.display(), err))?;
     }
     Ok(())
   }
   pub fn config_path() -> PathBuf {
     match dirs::home_dir() {
-      // The path is ～/.gitez.json
-      Some(home_dir) => home_dir.join(CONFIG_NAME),
-      None => PathBuf::from(CONFIG_NAME),
+      // The path is ～/.gitez/config.json
+      Some(home_dir) => home_dir.join(DIR).join(CONFIG_FILENAME),
+      None => PathBuf::from(DIR).join(CONFIG_FILENAME),
     }
   }
   pub fn new() -> Result<Self> {
     let config_path = GlobalConfig::config_path();
-    let config_str = fs::read_to_string(config_path)
-      .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", CONFIG_NAME, err))?;
+    let config_str = fs::read_to_string(&config_path)
+      .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", config_path.display(), err))?;
     let config = serde_json::from_str::<GlobalConfig>(&config_str)
-      .map_err(|err| anyhow::anyhow!("Unable to parse {}. Reason: {}", CONFIG_NAME, err))?;
+      .map_err(|err| anyhow::anyhow!("Unable to parse {}. Reason: {}", config_path.display(), err))?;
     Ok(config)
   }
 
   pub fn save(&self) -> Result<()> {
     let config_path = GlobalConfig::config_path();
     let config_str = serde_json::to_string_pretty(&self)
-      .map_err(|err| anyhow::anyhow!("Unable to serialize {}. Reason: {}", CONFIG_NAME, err))?;
-    fs::write(config_path, config_str)
-      .map_err(|err| anyhow::anyhow!("Unable to write {}. Reason: {}", CONFIG_NAME, err))?;
+      .map_err(|err| anyhow::anyhow!("Unable to serialize {}. Reason: {}", config_path.display(), err))?;
+    fs::write(&config_path, config_str)
+      .map_err(|err| anyhow::anyhow!("Unable to write {}. Reason: {}", config_path.display(), err))?;
     Ok(())
   }
 }

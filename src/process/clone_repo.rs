@@ -29,11 +29,6 @@ fn get_repo_local_path(git_url: &GitUrl, global_config: &GlobalConfig) -> Result
 }
 
 fn call_git_clone_command(url: &str, repo_path: &Path) -> Result<()> {
-  run_piped_command(vec![
-    "git".to_string(),
-    "clone".to_string(),
-    url.to_string(),
-    repo_path.to_string_lossy().to_string(),
-  ])?;
+  run_piped_command(vec!["git", "clone", url, repo_path.to_str().unwrap()])?;
   Ok(())
 }

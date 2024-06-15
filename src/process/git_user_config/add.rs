@@ -1,6 +1,5 @@
 use crate::{GitUserConfig, GlobalConfig};
 use anyhow::{Ok, Result};
-use console::style;
 use dialoguer::Input;
 use regex::Regex;
 
@@ -46,12 +45,7 @@ pub fn add() -> Result<()> {
 
   GitUserConfig::new(&config_id, &name, &email).add()?;
 
-  println!(
-    "Git user config {}({}<{}>) added successfully!",
-    style(&config_id).bold(),
-    style(&name).bold(),
-    style(&email).bold()
-  );
+  println!("Git user config added successfully!",);
 
   Ok(())
 }

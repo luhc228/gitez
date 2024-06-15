@@ -14,17 +14,17 @@ fn get_shell_name() -> String {
   }
 }
 
-fn get_shell_args(args: Vec<String>) -> Vec<String> {
+fn get_shell_args(args: Vec<&str>) -> Vec<String> {
   // windows
   if cfg!(windows) {
-    vec!["/c".to_string(), args.join(" ")]
+    ["/c", &args.join(" ")].iter().map(|s| s.to_string()).collect()
   } else {
     // linux / macOS
-    vec!["-c".to_string(), args.join(" ")]
+    ["-c", &args.join(" ")].iter().map(|s| s.to_string()).collect()
   }
 }
 
-pub fn run_piped_command(args: Vec<String>) -> Result<()> {
+pub fn run_piped_command(args: Vec<&str>) -> Result<()> {
   let shell_name = get_shell_name();
   let shell_args = get_shell_args(args);
 
