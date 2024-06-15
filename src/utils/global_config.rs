@@ -5,8 +5,35 @@ use std::path::PathBuf;
 
 use crate::GitUserConfig;
 
-pub const DIR: &str = ".gitez";
+const DIR: &str = ".gitez";
 const CONFIG_FILENAME: &str = "config.json";
+
+pub struct GlobalDir(pub PathBuf);
+
+impl GlobalDir {
+  pub fn new() -> Self {
+    let global_dir = Self::global_dir();
+    if !global_dir.exists() {
+      fs::create_dir(&global_dir)
+        .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", global_dir.display(), err))
+        .expect("Unable to create global directory");
+    }
+    Self(global_dir)
+  }
+  fn global_dir() -> PathBuf {
+    match dirs::home_dir() {
+      // The path is ～/.gitez
+      Some(home_dir) => home_dir.join(DIR),
+      None => PathBuf::from(DIR),
+    }
+  }
+}
+
+impl Default for GlobalDir {
+  fn default() -> Self {
+    Self::new()
+  }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GlobalConfig {
@@ -16,29 +43,24 @@ pub struct GlobalConfig {
 
 impl GlobalConfig {
   pub fn init() -> Result<()> {
+    Self::init_config()?;
+    Ok(())
+  }
+
+  fn init_config() -> Result<()> {
     let config_path = GlobalConfig::config_path();
-    Self::init_dir()?;
     if !config_path.exists() {
       fs::write(&config_path, "{ \"git_user_configs\": [] }")
         .map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", config_path.display(), err))?;
     }
     Ok(())
   }
-  fn init_dir() -> Result<()> {
-    let config_path = GlobalConfig::config_path();
-    let dir = config_path.parent().unwrap();
-    if !dir.exists() {
-      fs::create_dir(dir).map_err(|err| anyhow::anyhow!("Unable to create {}. Reason: {}", dir.display(), err))?;
-    }
-    Ok(())
-  }
+
   pub fn config_path() -> PathBuf {
-    match dirs::home_dir() {
-      // The path is ～/.gitez/config.json
-      Some(home_dir) => home_dir.join(DIR).join(CONFIG_FILENAME),
-      None => PathBuf::from(DIR).join(CONFIG_FILENAME),
-    }
+    let global_dir = GlobalDir::new();
+    global_dir.0.join(CONFIG_FILENAME)
   }
+
   pub fn new() -> Result<Self> {
     let config_path = GlobalConfig::config_path();
     let config_str = fs::read_to_string(&config_path)

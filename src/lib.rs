@@ -1,6 +1,5 @@
 mod commands;
 mod process;
-mod prompts;
 mod utils;
 
 pub use commands::*;
