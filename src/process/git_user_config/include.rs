@@ -41,7 +41,22 @@ fn create_git_config_file(git_user_config: &GitUserConfig) -> Result<PathBuf> {
 }
 
 fn add_include_git_config_to_global(folder_path: &str, git_config_path: PathBuf) -> Result<()> {
-  let config_key = format!("includeIf.\"gitdir:{}\".path", git_config_path.display());
-  run_piped_command(vec!["git", "config", "--global", &config_key, folder_path])?;
+  let config_key = format!("includeIf.\"gitdir:{}\".path", add_separator_to_path(folder_path));
+  run_piped_command(vec![
+    "git",
+    "config",
+    "--global",
+    &config_key,
+    &git_config_path.to_string_lossy(),
+  ])?;
   Ok(())
+}
+
+// src/utils -> src/utils/
+fn add_separator_to_path(path: &str) -> String {
+  if path.ends_with(std::path::MAIN_SEPARATOR) {
+    path.to_string()
+  } else {
+    format!("{path}{}", std::path::MAIN_SEPARATOR)
+  }
 }
